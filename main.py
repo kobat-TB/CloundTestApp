@@ -43,7 +43,7 @@ class main:
 
         mp = MainProcess(param['mainprocess'], lp.queue)
         mp.start()
-        sleep(600)
+        sleep(5)
         mp.stop()
 
         ### save config.ini ###

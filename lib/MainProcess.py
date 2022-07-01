@@ -4,6 +4,7 @@ from multiprocessing import Process, Queue, Value
 from gaputils.iointerface.RRIProcess import RRIProcess
 from gaputils.iointerface.SCUProcess import SCUProcess
 from gaputils.iointerface.ModeCloudProcess import ModeCloudProcess
+from gaputils.iointerface.CsvOutProcess import CsvOutProcess
 
 # for debug
 import logging
@@ -18,6 +19,8 @@ class MainProcess():
         'scu':{},
         'mode_flg':True,
         'mode':{},
+        'csvout_flg':True,
+        'csvout':{},
         'sleep_sec':0.001,
         }
 
@@ -42,6 +45,8 @@ class MainProcess():
         self.__outdevs = list()
         if self.__param['mode_flg']:
             self.__outdevs.append(ModeCloudProcess(self.__param['mode'], lq))
+        if self.__param['csvout_flg']:
+            self.__outdevs.append(CsvOutProcess(self.__param['csvout'], lq))
 
         # initialize members
         self.__queue = Queue()
@@ -81,12 +86,8 @@ class MainProcess():
                     for outdev in outdevs:
                         outdev.data_send = data
 
-                    # tempolary test
-                    # df_tmp = indev.data2df(data)
-                    # print(df_tmp)
-
             sleep(self.__param['sleep_sec'])
-            
+
         logger.info('Stop main process.')
 
         # stop devices
@@ -153,6 +154,8 @@ class MainProcess():
         for outdev in self.__outdevs:
             if isinstance(outdev, ModeCloudProcess):
                 self.__param['mode'] = outdev.param
+            elif isinstance(outdev, CsvOutProcess):
+                self.__param['csvout'] = outdev.param
             else:
                 msg = f'"{type(outdev)}" is unknown class instance.'
                 logger.error(msg)
