@@ -1,3 +1,4 @@
+from sys import platform
 from time import sleep
 from multiprocessing import Process, Queue, Value
 
@@ -55,13 +56,13 @@ class MainProcess():
         self.__p = None
 
     def _work(self, indevs, outdevs, queue, run_flg, lq):
-        # set up logging for multiprocessing
-        if lq is not None:
+        # set up logging for multiprocessing if platform is not linux
+        if (lq is not None) and (platform not in ('linux', 'linux2')):
             h = logging.handlers.QueueHandler(lq)
             root = logging.getLogger()
             root.addHandler(h)
             root.setLevel(logging.NOTSET)
-        
+
         # start devices
         for outdev in outdevs:
             outdev.start()
