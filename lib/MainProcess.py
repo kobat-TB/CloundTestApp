@@ -5,6 +5,7 @@ from gaputils.iointerface.RRIProcess import RRIProcess
 from gaputils.iointerface.SCUProcess import SCUProcess
 from gaputils.iointerface.ModeCloudProcess import ModeCloudProcess
 from gaputils.iointerface.CsvOutProcess import CsvOutProcess
+from gaputils.iointerface.ExceptionClass import InterfaceError
 
 # for debug
 import logging
@@ -37,9 +38,15 @@ class MainProcess():
         # initialize input devices process
         self.__indevs = list()
         if self.__param['rri_flg']:
-            self.__indevs.append(RRIProcess(self.__param['rri'], lq))
+            try:
+                self.__indevs.append(RRIProcess(self.__param['rri'], lq))
+            except InterfaceError as e:
+                logger.error(e)
         if self.__param['scu_flg']:
-            self.__indevs.append(SCUProcess(self.__param['scu'], lq))
+            try:
+                self.__indevs.append(SCUProcess(self.__param['scu'], lq))
+            except InterfaceError as e:
+                logger.error(e)
 
         # initialize output devices process
         self.__outdevs = list()
