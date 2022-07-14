@@ -7,6 +7,7 @@ from gaputils.iointerface.SCUProcess import SCUProcess
 from gaputils.iointerface.ModeCloudProcess import ModeCloudProcess
 from gaputils.iointerface.CsvOutProcess import CsvOutProcess
 from gaputils.iointerface.ExceptionClass import InterfaceError
+from gaputils.iointerface.QwiicGPSProcess import QwiicGPSProcess
 
 # for debug
 import logging
@@ -19,6 +20,8 @@ class MainProcess():
         'rri':{},
         'scu_flg':True,
         'scu':{},
+        'gps_flg':True,
+        'gps':{},
         'mode_flg':True,
         'mode':{},
         'csvout_flg':True,
@@ -46,6 +49,11 @@ class MainProcess():
         if self.__param['scu_flg']:
             try:
                 self.__indevs.append(SCUProcess(self.__param['scu'], lq))
+            except InterfaceError as e:
+                logger.error(e)
+        if self.__param['gps_flg']:
+            try:
+                self.__indevs.append(QwiicGPSProcess(self.__param['gps'], lq))
             except InterfaceError as e:
                 logger.error(e)
 
@@ -153,6 +161,8 @@ class MainProcess():
                self.__param['rri'] = indev.param
             elif isinstance(indev, SCUProcess):
                self.__param['scu'] = indev.param
+            elif isinstance(indev, QwiicGPSProcess):
+               self.__param['gps'] = indev.param
             else:
                 msg = f'"{type(indev)}" is unknown class instance.'
                 logger.error(msg)

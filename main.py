@@ -82,6 +82,7 @@ class main:
 
             if input_str.upper() == 'STOP':
                 print(f'get stop command')
+                break
             else:
                 print(f'"{input_str} is unknown.')
                 
